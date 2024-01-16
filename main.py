@@ -149,7 +149,16 @@ plt.show()
 
 # EXPLORATORY DATA ANALYSIS
 
-print(df_clean.describe(include='all'))
+correlation_matrix = df_clean.corr()
+mesothelioma_correlation = correlation_matrix['mortality'].abs().sort_values(ascending=False)
+print(mesothelioma_correlation)
+
+
+# Example of a heatmap for correlation analysis
+correlation_matrix = df_clean.corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
+plt.title('Correlation Heatmap')
+plt.show()
 
 # UNSUPERVISED LEARNING (PRINCIPAL COMPONENT ANALYSIS)
 # To reduce dimensionality of the dataset
@@ -164,3 +173,6 @@ plt.xlabel("First principal component")
 plt.ylabel("Second principal component")
 plt.grid(True)
 plt.show()
+
+# SUPERVISED LEARNING
+
