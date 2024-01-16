@@ -6,6 +6,8 @@ import seaborn as sns
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+from imblearn.over_sampling import SMOTE
+from IPython.display import display
 
 # DATA CLEANING
 df = pd.read_csv("Mesothelioma-data.csv")
@@ -159,6 +161,11 @@ correlation_matrix = df_clean.corr()
 sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
 plt.title('Correlation Heatmap')
 plt.show()
+
+#TRAIN-SPLIT TEST
+
+y = df_clean['mortality']
+# SMOTE
 
 # UNSUPERVISED LEARNING (PRINCIPAL COMPONENT ANALYSIS)
 # To reduce dimensionality of the dataset
