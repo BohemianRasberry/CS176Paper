@@ -3,9 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
 import seaborn as sns
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import LabelBinarizer
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 
 # DATA CLEANING
 df = pd.read_csv("Mesothelioma-data.csv")
@@ -17,14 +17,13 @@ print(df.head())
 # print(df.isnull().sum())
 
 # Remove irrelevant variables
-df_semi_clean = df.drop(['keep side', 'city'], axis=1)
+df_semi_clean = df.drop(['keep side', 'city', 'asbestos exposure'], axis=1)
 
 df_semi_clean.rename(columns={
     'age': 'age',
     'gender': 'gender',
-    'asbestos exposure': 'asbestosExposure',
     'type of MM': 'mesotheliomaType',
-    'duration of asbestos exposure': 'durationOfAsbestosExposure',
+    'duration of asbestos exposure': 'asbestosExposure',
     'diagnosis method': 'diagnosisMethod',
     'cytology': 'cytology',
     'duration of symptoms': 'durationOfSymptoms',
@@ -74,8 +73,7 @@ for column in df_semi_clean.select_dtypes(include=['float']):
         df_semi_clean[column] = df_semi_clean[column].astype(int)
 
 # Data Type Conversion
-df_semi_clean['gender'] = df_semi_clean['gender'].astype('category')
-df_semi_clean['mesotheliomaType'] = df_semi_clean['mesotheliomaType'].astype('category')
+# df_semi_clean['gender'] = df_semi_clean['gender'].astype('category')
 # df_semi_clean['mesotheliomaType'] = df_semi_clean['mesotheliomaType'].astype('category')
 
 # Removing outliers and cleaning data set
@@ -128,8 +126,9 @@ df_clean.to_csv('Mesothelioma_transform_data.csv', index = False)
 
 ## VISUALIZATION OF UNSTRANSFORMED TRANSFORMED DATA
 
-columns_to_visualize = ['whiteBlood', 'wbcCount', 'plt']
+columns_to_visualize = ['asbestosExposure', 'whiteBlood', 'wbcCount', 'plt']
 
+'''
 # UNSTRANSFORMED DATA
 plt.figure(figsize=(15, 5))
 for i, column in enumerate(columns_to_visualize, 1):
@@ -146,4 +145,22 @@ for i, column in enumerate(columns_to_visualize, 1):
 
 plt.show()
 
-# DATA
+'''
+
+# EXPLORATORY DATA ANALYSIS
+
+print(df_clean.describe(include='all'))
+
+# UNSUPERVISED LEARNING (PRINCIPAL COMPONENT ANALYSIS)
+# To reduce dimensionality of the dataset
+
+pca = PCA()
+X_pca = pca.fit_transform(df_clean)
+
+plt.figure(figsize=(8, 6))
+plt.scatter(X_pca[:, 0], X_pca[:, 1], edgecolor='k', alpha=0.7)
+plt.title("PCA Projection")
+plt.xlabel("First principal component")
+plt.ylabel("Second principal component")
+plt.grid(True)
+plt.show()
