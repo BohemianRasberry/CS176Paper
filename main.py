@@ -1,17 +1,34 @@
+import pandas as pd
 import numpy as np
-# This is a sample Python script.
+import matplotlib.pyplot as plt
+from scipy import stats
+import seaborn as sns
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelBinarizer
+from sklearn.preprocessing import StandardScaler
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+df = pd.read_csv("Mesothelioma-data.csv")
+
+# Display the first few rows of the dataset
+# print(df.head())
+
+# Get a concise summary of the DataFrame
+# print(df.info())
+
+# Descriptive statistics for numerical columns
+# print(df.describe())
+
+# Check for missing values
+# print(df.isnull().sum())
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
+# Example: Identifying outliers using Z-score
+z_scores = np.abs(stats.zscore(df.select_dtypes(include=[np.number])))
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+print(z_scores)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+outliers = np.where(z_scores > 3)
+
+# Depending on the context, you might want to inspect these outliers before deciding to remove them.
+print(outliers)
