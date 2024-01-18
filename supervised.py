@@ -4,6 +4,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.feature_selection import RFE
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix
+from imblearn.over_sampling import SMOTE
+from scipy import stats
 import numpy as np
 import pandas as pd
 
@@ -17,13 +21,15 @@ print(df.head())
 # print(df.isnull().sum())
 
 # Remove irrelevant variables
-df_semi_clean = df.drop(['keep side', 'city', 'asbestos exposure'], axis=1)
+df_semi_clean = df.drop(['keep side'], axis=1)
 
 df_semi_clean.rename(columns={
     'age': 'age',
     'gender': 'gender',
+    'city': 'city',
+    ' asbestos exposure': 'asbestorExposure',
     'type of MM': 'mesotheliomaType',
-    'duration of asbestos exposure': 'asbestosExposure',
+    'duration of asbestos exposure': 'asbestosExposureDuration',
     'diagnosis method': 'diagnosisMethod',
     'cytology': 'cytology',
     'duration of symptoms': 'durationOfSymptoms',
@@ -60,7 +66,6 @@ print(df_semi_clean.head())
 df_semi_clean = df_semi_clean.drop_duplicates()
 
 
-'''
 # Checking on outliers
 z_scores = np.abs(stats.zscore(df_semi_clean))
 outlier_indices = np.where(z_scores > 3)  # Assuming 3 as the Z-score threshold
@@ -68,11 +73,6 @@ unique_row_indices = np.unique(outlier_indices[0])
 
 print("Rows with outliers:", unique_row_indices)
 
-# Removing outliers and cleaning data set
-df_clean = df_semi_clean.drop(unique_row_indices)
-df_clean.reset_index(drop=True, inplace=True)
-
-'''
 
 # Convert Floats to Integers
 for column in df_semi_clean.select_dtypes(include=['float']):
@@ -80,12 +80,42 @@ for column in df_semi_clean.select_dtypes(include=['float']):
     if all(df_semi_clean[column] % 1 == 0):
         df_semi_clean[column] = df_semi_clean[column].astype(int)
 
-df_clean = df_semi_clean
+
+# Removing outliers and cleaning data set
+df_clean = df_semi_clean.drop(unique_row_indices)
+df_clean.reset_index(drop=True, inplace=True)
 
 df_clean.to_csv('Mesothelioma_clean_data.csv', index = False)
 
-print(df_clean.describe())
-print(df_clean.dtypes)
+# print(df_clean.describe())
+# print(df_clean.dtypes)
+
+# Logistic Regression Model overfits the data
+
+X = df_clean.drop('diagnosisClass', axis=1)
+y = df_clean('diagnosisClass')
+
+# Scaling the data
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Training to Test Data Split 80 to 20
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+# Initialize the Logistic Regression model
+log_reg = LogisticRegression()
+
+# Train the model
+log_reg.fit(X_train, y_train)
+
+# Make predictions
+y_pred = log_reg.predict(X_test)
+
+# Evaluate the model
+print(classification_report(y_test, y_pred))
+print(confusion_matrix(y_test, y_pred))
+
 
 '''
 # DATA TRANSFORMATION
@@ -125,11 +155,12 @@ df_clean[['asbestosExposure',
           'crp'
           ]])
 
-'''
+
 
 # SPLIT DATASET
 X = df_clean.drop('diagnosisClass', axis=1)
 y = df_clean['diagnosisClass']
+# 80% Training Data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # DATA TRANSFORMATION
@@ -163,3 +194,8 @@ r2 = r2_score(y_test, y_pred)
 
 print("Mean Squared Error:", mse)
 print("R-squared:", r2)
+
+'''
+
+
+
