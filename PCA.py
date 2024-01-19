@@ -35,7 +35,7 @@ from sklearn.preprocessing import StandardScaler
 mesothelioma_dataset['Class of Diagnosis'].replace('Healthy', 1, inplace=True)
 mesothelioma_dataset['Class of Diagnosis'].replace('Mesothelioma', 2, inplace=True)
 
-# Mean and Standard Deviation #
+# Table #
 new_column_names = list(column_rename.values())
 x = mesothelioma_dataset[new_column_names].values
 x = StandardScaler().fit_transform(x)
