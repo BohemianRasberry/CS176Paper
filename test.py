@@ -18,6 +18,8 @@ import pandas as pd
 df = pd.read_csv('Mesothelioma-data.csv')
 df.rename(columns=column_rename, inplace=True)
 mesothelioma_dataset = pd.DataFrame(df)
+
+# Replace Int to Character"
 mesothelioma_dataset['Class of Diagnosis'].replace(1, 'Healthy',inplace=True)
 mesothelioma_dataset['Class of Diagnosis'].replace(2, 'Mesothelioma',inplace=True)
 
@@ -26,19 +28,26 @@ print("")
 print(mesothelioma_dataset.head())
 print("")
 
+# StandardScaler #
 from sklearn.preprocessing import StandardScaler
 
+# Replace Character to Int"
 mesothelioma_dataset['Class of Diagnosis'].replace('Healthy', 1, inplace=True)
 mesothelioma_dataset['Class of Diagnosis'].replace('Mesothelioma', 2, inplace=True)
+
+# Mean and Standard Deviation #
 new_column_names = list(column_rename.values())
 x = mesothelioma_dataset[new_column_names].values
 x = StandardScaler().fit_transform(x)
 
+# Numpy #
 import numpy as np
 
+# Mean and Standard Deviation #
 print("Mean & Standard Deviation:" "(", np.mean(x) , "," , np.std(x) , ")")
 print("")
 
+# Features Table #
 feature_columns = ['feature'+str(i) for i in range(x.shape[1])]
 normalized_mesothelioma = pd.DataFrame(x,columns=feature_columns)
 
@@ -46,8 +55,10 @@ normalized_mesothelioma = pd.DataFrame(x,columns=feature_columns)
 print(normalized_mesothelioma.head())
 print("")
 
+# PCA #
 from sklearn.decomposition import PCA
 
+# PCA process #
 pca_mesothelioma = PCA(n_components=2)
 principalComponents_mesothelioma = pca_mesothelioma.fit_transform(x)
 principal_mesothelioma_Df = pd.DataFrame(data = principalComponents_mesothelioma
@@ -59,14 +70,18 @@ print(principal_mesothelioma_Df.head())
 print("")
 print('Explained variation per principal component: {}'.format(explained_variances))
 
+# Pyplot #
 import matplotlib.pyplot as plt
 
+# For Printing Values of Explained Variance Ratio In Plot #
 variance_pc1 = explained_variances[0]
 variance_pc2 = explained_variances[1]
 
+# Replace Int to Character"
 df['Class of Diagnosis'].replace(1, 'Healthy',inplace=True)
 df['Class of Diagnosis'].replace(2, 'Mesothelioma',inplace=True)
 
+# Scatter Plot Variables #
 plt.figure(figsize=(10,10))
 plt.xticks(fontsize=12)
 plt.yticks(fontsize=14)
@@ -79,6 +94,7 @@ for target, color in zip(targets,colors):
     indicesToKeep = df['Class of Diagnosis'] == target
     plt.scatter(principal_mesothelioma_Df.loc[indicesToKeep, 'principal component 1']
                , principal_mesothelioma_Df.loc[indicesToKeep, 'principal component 2'], c = color, s = 50)
-
 plt.legend(targets,prop={'size': 15})
+
+# Print Scatter Plot #
 plt.show()
