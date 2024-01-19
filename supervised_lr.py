@@ -1,14 +1,7 @@
-from sklearn.svm import SVR
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.feature_selection import RFE
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-from imblearn.over_sampling import SMOTE
-from imblearn.under_sampling import TomekLinks
-from imblearn.combine import SMOTETomek
 from scipy import stats
 import numpy as np
 import pandas as pd
@@ -90,11 +83,10 @@ df_clean.to_csv('Mesothelioma_clean_data.csv', index = False)
 
 # Logistic Regression Model overfits the data
 
-X = df_clean.drop('diagnosisClass', axis=1)
-y = df_clean['diagnosisClass']
+X = df.drop('class of diagnosis', axis=1)
+y = df['class of diagnosis']
 
 # Scaling the data
-
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
